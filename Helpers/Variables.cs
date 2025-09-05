@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
-using Styx;
 using Styx.Common;
+using NumericsVector3 = System.Numerics.Vector3;
+using Styx;
 using Styx.CommonBot.Database;
 using Styx.CommonBot.ObjectDatabase;
 using Styx.WoWInternals;
