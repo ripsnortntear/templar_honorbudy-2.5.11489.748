@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Numerics;
 using Styx.Common;
 using Styx.CommonBot;
 using Styx.CommonBot.Frames;
@@ -162,7 +161,7 @@ namespace Templar.Helpers {
                         Variables.NextMob.Target();
                     }
 
-                    if(Vector3.Distance(Variables.NextMob.Location, StyxWoW.Me.Location) > 50) {
+                    if(Variables.NextMob.Location.Distance(StyxWoW.Me.Location) > 50) {
                         Navigator.MoveTo(Variables.NextMob.Location);
                     } else {
                         if(!Variables.PullBlacklistStopwatch.IsRunning) {
@@ -194,42 +193,41 @@ namespace Templar.Helpers {
                     Variables.LootBlacklistStopwatch.Reset();
                 }
 
-                    if(Vector3.Distance(Variables.LootMob.Location, StyxWoW.Me.Location) > 50) {
+                if(Variables.LootMob.Location.Distance(StyxWoW.Me.Location) > 50) {
+                    Navigator.MoveTo(Variables.LootMob.Location);
+                } else {
+                    if(Variables.LootMob.Location.Distance(StyxWoW.Me.Location) > 3) {
                         Navigator.MoveTo(Variables.LootMob.Location);
                     } else {
-                        if(Vector3.Distance(Variables.LootMob.Location, StyxWoW.Me.Location) > 3) {
-                            Navigator.MoveTo(Variables.LootMob.Location);
-                        } else {
-                            if(StyxWoW.Me.IsMoving) {
-                                WoWMovement.MoveStop();
-                            }
-
-                            if(!Variables.LootStopwatch.IsRunning) {
-                                Variables.LootStopwatch.Start();
-
-                                if(!LootFrame.Instance.IsVisible) {
-                                    Variables.LootMob.Interact();
-                                }
-                            } else {
-                                if(Variables.LootStopwatch.ElapsedMilliseconds >= Conversion.SecondsToMilliseconds(GeneralSettings.Instance.TimeBetweenLoots)) {
-                                    Variables.LootStopwatch.Reset();
-                                }
-                            }
+                        if(StyxWoW.Me.IsMoving) {
+                            WoWMovement.MoveStop();
                         }
 
-                        if(!Variables.LootBlacklistStopwatch.IsRunning) {
-                            Variables.LootBlacklistStopwatch.Start();
+                        if(!Variables.LootStopwatch.IsRunning) {
+                            Variables.LootStopwatch.Start();
+
+                            if(!LootFrame.Instance.IsVisible) {
+                                Variables.LootMob.Interact();
+                            }
                         } else {
-                            if(Variables.LootBlacklistStopwatch.ElapsedMilliseconds >= 25000) {
-                                if(Variables.LootMobGuid == Variables.LootMob.Guid) {
-                                    CustomLog.Diagnostic("Can't loot {0} in 25 seconds, blacklisting for this session.", Variables.LootMob.SafeName);
-                                    CustomBlacklist.Add(Variables.LootMob.Guid, TimeSpan.FromDays(365));
-                                    Variables.LootMob = null;
-                                }
+                            if(Variables.LootStopwatch.ElapsedMilliseconds >= Conversion.SecondsToMilliseconds(GeneralSettings.Instance.TimeBetweenLoots)) {
+                                Variables.LootStopwatch.Reset();
                             }
                         }
                     }
 
+                    if(!Variables.LootBlacklistStopwatch.IsRunning) {
+                        Variables.LootBlacklistStopwatch.Start();
+                    } else {
+                        if(Variables.LootBlacklistStopwatch.ElapsedMilliseconds >= 25000) {
+                            if(Variables.LootMobGuid == Variables.LootMob.Guid) {
+                                CustomLog.Diagnostic("Can't loot {0} in 25 seconds, blacklisting for this session.", Variables.LootMob.SafeName);
+                                CustomBlacklist.Add(Variables.LootMob.Guid, TimeSpan.FromDays(365));
+                                Variables.LootMob = null;
+                            }
+                        }
+                    }
+                }
             }
 
             PriorityTreeState.TreeState = PriorityTreeState.State.ReadyForTask;
@@ -242,41 +240,41 @@ namespace Templar.Helpers {
                     Variables.SkinBlacklistStopwatch.Reset();
                 }
 
-                    if(Vector3.Distance(Variables.SkinMob.Location, StyxWoW.Me.Location) > 50) {
+                if(Variables.SkinMob.Location.Distance(StyxWoW.Me.Location) > 50) {
+                    Navigator.MoveTo(Variables.SkinMob.Location);
+                } else {
+                    if(Variables.SkinMob.Location.Distance(StyxWoW.Me.Location) > 3) {
                         Navigator.MoveTo(Variables.SkinMob.Location);
                     } else {
-                        if(Vector3.Distance(Variables.SkinMob.Location, StyxWoW.Me.Location) > 3) {
-                            Navigator.MoveTo(Variables.SkinMob.Location);
-                        } else {
-                            if(StyxWoW.Me.IsMoving) {
-                                WoWMovement.MoveStop();
-                            }
-
-                            if(!Variables.LootStopwatch.IsRunning) {
-                                Variables.LootStopwatch.Start();
-
-                                if(!LootFrame.Instance.IsVisible) {
-                                    Variables.SkinMob.Interact();
-                                }
-                            } else {
-                                if(Variables.LootStopwatch.ElapsedMilliseconds >= Conversion.SecondsToMilliseconds(GeneralSettings.Instance.TimeBetweenSkins)) {
-                                    Variables.LootStopwatch.Reset();
-                                }
-                            }
+                        if(StyxWoW.Me.IsMoving) {
+                            WoWMovement.MoveStop();
                         }
 
-                        if(!Variables.SkinBlacklistStopwatch.IsRunning) {
-                            Variables.SkinBlacklistStopwatch.Start();
+                        if(!Variables.LootStopwatch.IsRunning) {
+                            Variables.LootStopwatch.Start();
+
+                            if(!LootFrame.Instance.IsVisible) {
+                                Variables.SkinMob.Interact();
+                            }
                         } else {
-                            if(Variables.SkinBlacklistStopwatch.ElapsedMilliseconds >= 25000) {
-                                if(Variables.SkinMobGuid == Variables.SkinMob.Guid) {
-                                    CustomLog.Diagnostic("Can't skin {0} in 25 seconds, blacklisting for this session.", Variables.SkinMob.SafeName);
-                                    CustomBlacklist.Add(Variables.SkinMob.Guid, TimeSpan.FromDays(365));
-                                    Variables.SkinMob = null;
-                                }
+                            if(Variables.LootStopwatch.ElapsedMilliseconds >= Conversion.SecondsToMilliseconds(GeneralSettings.Instance.TimeBetweenSkins)) {
+                                Variables.LootStopwatch.Reset();
                             }
                         }
                     }
+
+                    if(!Variables.SkinBlacklistStopwatch.IsRunning) {
+                        Variables.SkinBlacklistStopwatch.Start();
+                    } else {
+                        if(Variables.SkinBlacklistStopwatch.ElapsedMilliseconds >= 25000) {
+                            if(Variables.SkinMobGuid == Variables.SkinMob.Guid) {
+                                CustomLog.Diagnostic("Can't skin {0} in 25 seconds, blacklisting for this session.", Variables.SkinMob.SafeName);
+                                CustomBlacklist.Add(Variables.SkinMob.Guid, TimeSpan.FromDays(365));
+                                Variables.SkinMob = null;
+                            }
+                        }
+                    }
+                }
             }
 
             PriorityTreeState.TreeState = PriorityTreeState.State.ReadyForTask;
