@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Numerics;
+using System.Linq;
 using Styx;
 using Styx.Common;
 using Styx.CommonBot;
@@ -141,7 +140,7 @@ namespace Templar.Helpers {
             } else {
                 //CustomLog.Normal("We have a repair vendor! Name: {0}, Distance: {1}", repairVendor.Name, repairVendor.Location.Distance(StyxWoW.Me.Location));
 
-                if(Vector3.Distance(StyxWoW.Me.Location, Variables.FarRepairVendor.Location) > 30) {
+                if(Variables.FarRepairVendor.Location.Distance(StyxWoW.Me.Location) > 30) {
                     Flightor.MoveTo(Variables.FarRepairVendor.Location, true);
                 } else {
                     HandleCloseVendor();
