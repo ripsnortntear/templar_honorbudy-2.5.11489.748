@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Numerics;
 using Styx;
 using Styx.Common;
 using Styx.CommonBot;
@@ -109,9 +108,9 @@ namespace Templar.Helpers {
             if(Variables.FarMailbox == null) {
                 CustomLog.Normal("Could not find far mailbox.");
             } else {
-                if(Vector3.Distance(StyxWoW.Me.Location, Variables.FarMailbox.Location) > 30) {
-                    CustomLog.Diagnostic("We have a mailbox! Distance: {0}", Vector3.Distance(Variables.FarMailbox.Location, StyxWoW.Me.Location));
-                    Flightor.MoveTo(Variables.FarMailbox.Location, true);
+                if(StyxWoW.Me.Location.Distance(Variables.FarMailbox.Location) > 30) {
+                CustomLog.Diagnostic("We have a mailbox! Distance: {0}", Variables.FarMailbox.Location.Distance(StyxWoW.Me.Location));
+                Flightor.MoveTo(Variables.FarMailbox.Location, true);
                 } else {
                     HandleCloseMailbox();
                 }
