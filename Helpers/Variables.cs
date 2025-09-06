@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Styx.Common;
-using NumericsVector3 = System.Numerics.Vector3;
 using Styx;
 using Styx.CommonBot.Database;
 using Styx.CommonBot.ObjectDatabase;
