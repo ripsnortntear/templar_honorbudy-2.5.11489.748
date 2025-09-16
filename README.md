@@ -4,7 +4,7 @@ Updated bot "Templar" for use with HonorBuddy version 2.5.11489.748.
 
 ## Overview
 
-This repository provides an updated version of the Templar bot for the HonorBuddy automation platform. The Templar bot is written in C# and is designed to automate gameplay actions, likely for the Paladin class in World of Warcraft. It is distributed under the GNU General Public License v3.0.
+This repository provides an updated version of the Templar bot for the HonorBuddy automation platform. The Templar bot is written in C# and is designed to automate gameplay actions, for every class in World of Warcraft Mists of Pandaria (Retail). It is distributed under the GNU General Public License v3.0.
 
 ## Features
 
