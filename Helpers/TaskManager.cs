@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using Styx.Common;
 using Styx.CommonBot;

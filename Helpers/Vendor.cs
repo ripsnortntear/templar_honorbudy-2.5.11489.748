@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Styx;
 using Styx.Common;
 using Styx.CommonBot;

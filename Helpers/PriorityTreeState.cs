@@ -2,6 +2,7 @@
 using Styx.Pathing;
 using Styx.WoWInternals;
 using Templar.GUI.Tabs;
+using Templar.Helpers;
 
 namespace Templar.Helpers {
     public class PriorityTreeState {
@@ -52,11 +53,11 @@ namespace Templar.Helpers {
             // START
             /////////////////////////////////////
 
-            if(!StyxWoW.Me.IsValid) {
+            if (!StyxWoW.Me.IsValid) {
                 return;
             }
 
-            if(!Variables.AlteredSettings) {
+            if (!Variables.AlteredSettings) {
                 AlterSettings();
                 LogSettings();
 
@@ -71,17 +72,17 @@ namespace Templar.Helpers {
             TaskManager.HandleAFKFlag();
             TaskManager.HandleCombatBug();
 
-            if(TreeState == State.Mailing) {
+            if (TreeState == State.Mailing) {
                 CustomLog.Diagnostic("Mailing State");
 
-                if(Variables.MobsTargettingMe != 0) {
+                if (Variables.MobsTargettingMe != 0) {
                     return;
                 }
 
-                if(MailSettings.Instance.Mail) {
+                if (MailSettings.Instance.Mail) {
                     Mail.CheckBags();
 
-                    if(Variables.MailList.Count > 0) {
+                    if (Variables.MailList.Count > 0) {
                         Mail.HandleMailing();
                         return;
                     }
@@ -92,17 +93,17 @@ namespace Templar.Helpers {
                 }
             }
 
-            if(TreeState == State.Vendoring) {
+            if (TreeState == State.Vendoring) {
                 CustomLog.Diagnostic("Vendoring State");
 
-                if(Variables.MobsTargettingMe != 0) {
+                if (Variables.MobsTargettingMe != 0) {
                     return;
                 }
 
-                if(VendorSettings.Instance.Vendor) {
+                if (VendorSettings.Instance.Vendor) {
                     Vendor.CheckBags();
 
-                    if(Variables.VendorSellList.Count > 0 || Variables.NeedToRepair) {
+                    if (Variables.VendorSellList.Count > 0 || Variables.NeedToRepair) {
                         Vendor.HandleVendoring();
                         return;
                     }
@@ -113,17 +114,17 @@ namespace Templar.Helpers {
                 }
             }
 
-            if(TreeState == State.Disenchanting) {
+            if (TreeState == State.Disenchanting) {
                 CustomLog.Diagnostic("Disenchanting State");
 
-                if(Variables.MobsTargettingMe != 0) {
+                if (Variables.MobsTargettingMe != 0) {
                     return;
                 }
 
-                if(DisenchantSettings.Instance.Disenchant) {
+                if (DisenchantSettings.Instance.Disenchant) {
                     Disenchant.CheckBags();
 
-                    if(Variables.DisenchantList.Count > 0) {
+                    if (Variables.DisenchantList.Count > 0) {
                         Disenchant.HandleDisenchanting();
                         return;
                     }
@@ -137,14 +138,13 @@ namespace Templar.Helpers {
                 }
             }
 
-
             Variables.NeedToPull = true;
 
-            if(GeneralSettings.Instance.LootMobs) {
+            if (GeneralSettings.Instance.LootMobs) {
                 Variables.LootMob = Mob.GetLootMob;
             }
 
-            if(GeneralSettings.Instance.SkinMobs) {
+            if (GeneralSettings.Instance.SkinMobs) {
                 Variables.SkinMob = Mob.GetSkinMob;
             }
 
@@ -152,115 +152,114 @@ namespace Templar.Helpers {
             // END 
             ////////////////////////////////////////
 
-            switch(TreeState) {
-                case State.Dead:
-                    CustomLog.Diagnostic("Dead State");
-                    Variables.NextMob = null;
-                    Variables.LootMob = null;
-                    Variables.SkinMob = null;
+            switch (TreeState) {
+            case State.Dead:
+                CustomLog.Diagnostic("Dead State");
+                Variables.NextMob = null;
+                Variables.LootMob = null;
+                Variables.SkinMob = null;
 
-                    if(StyxWoW.Me.IsAlive) {
+                if (StyxWoW.Me.IsAlive) {
+                    TreeState = State.ReadyForTask;
+                }
+
+                break;
+
+            case State.ReadyForTask:
+                // Ready to switch states when necessary
+
+                break;
+
+            case State.Looting:
+                if (Variables.MobsTargettingMe == 0) {
+                    CustomLog.Diagnostic("Looting State");
+                    TaskManager.HandleLooting();
+                } else {
+                    TreeState = State.ReadyForTask;
+                }
+
+                break;
+
+            case State.Skinning:
+                if (Variables.MobsTargettingMe == 0) {
+                    CustomLog.Diagnostic("Skinning State");
+                    TaskManager.HandleSkinning();
+                } else {
+                    TreeState = State.ReadyForTask;
+                }
+
+                break;
+
+            case State.Pulling:
+                CustomLog.Diagnostic("Pulling State");
+
+                if (GeneralSettings.Instance.MultiPull) {
+                    //CustomLog.Diagnostic("Mobs targetting me: {0}", Variables.MobsTargettingMe);
+
+                    Variables.NeedToPull = (StyxWoW.Me.HealthPercent > GeneralSettings.Instance.HealthPercentThreshold &&
+                        Variables.MobsTargettingMe < GeneralSettings.Instance.MobThreshold);
+                }
+
+                if (GeneralSettings.Instance.LootMobs && Variables.LootMob != null) {
+                    Variables.NeedToPull = false;
+                }
+
+                if (GeneralSettings.Instance.SkinMobs && Variables.SkinMob != null) {
+                    Variables.NeedToPull = false;
+                }
+
+                if (!GeneralSettings.Instance.MultiPull && StyxWoW.Me.Combat) {
+                    Variables.NeedToPull = true;
+                }
+
+                //CustomLog.Diagnostic("Need to pull = {0}", Variables.NeedToPull);
+
+                if (!Variables.NeedToPull) {
+                    TreeState = State.ReadyForTask;
+                    break;
+                }
+
+                TaskManager.HandlePulling();
+
+                break;
+
+            case State.MoveToStartLocation:
+                if (!Variables.IsAtStartLocation) {
+                    CustomLog.Normal("Returning to start location.");
+                    Flightor.MoveTo(Variables.StartLocation, true);
+                } else {
+                    MountHelper.DismountIfMounted();
+
+                    if (!StyxWoW.Me.Mounted && !StyxWoW.Me.IsFalling) {
+                        CustomLog.Normal("Arrived at start location and dismounted.");
                         TreeState = State.ReadyForTask;
                     }
+                }
+                break;
 
-                    break;
-
-                case State.ReadyForTask:
-                    // Ready to switch states when necessary
-
-                    break;
-
-                case State.Looting:
-                    if(Variables.MobsTargettingMe == 0) {
-                        CustomLog.Diagnostic("Looting State");
-                        TaskManager.HandleLooting();
-                    } else {
-                        TreeState = State.ReadyForTask;
-                    }
-
-                    break;
-
-                case State.Skinning:
-                    if(Variables.MobsTargettingMe == 0) {
-                        CustomLog.Diagnostic("Skinning State");
-                        TaskManager.HandleSkinning();
-                    } else {
-                        TreeState = State.ReadyForTask;
-                    }
-
-                    break;
-
-                case State.Pulling:
-                    CustomLog.Diagnostic("Pulling State");
-
-                    if(GeneralSettings.Instance.MultiPull) {
-                        //CustomLog.Diagnostic("Mobs targetting me: {0}", Variables.MobsTargettingMe);
-
-                        Variables.NeedToPull = (StyxWoW.Me.HealthPercent > GeneralSettings.Instance.HealthPercentThreshold &&
-                                      Variables.MobsTargettingMe < GeneralSettings.Instance.MobThreshold);
-                    }
-
-                    if(GeneralSettings.Instance.LootMobs && Variables.LootMob != null) {
-                        Variables.NeedToPull = false;
-                    }
-
-                    if(GeneralSettings.Instance.SkinMobs && Variables.SkinMob != null) {
-                        Variables.NeedToPull = false;
-                    }
-
-                    if(!GeneralSettings.Instance.MultiPull && StyxWoW.Me.Combat) {
-                        Variables.NeedToPull = true;
-                    }
-
-                    //CustomLog.Diagnostic("Need to pull = {0}", Variables.NeedToPull);
-
-                    if(!Variables.NeedToPull) {
-                        TreeState = State.ReadyForTask;
-                        break;
-                    }
-
-                    TaskManager.HandlePulling();
-
-                    break;
-
-                case State.MoveToStartLocation:
-                    if(!Variables.IsAtStartLocation) {
-                        CustomLog.Normal("Returning to start location.");
-                        Flightor.MoveTo(Variables.StartLocation, true);
-                    } else {
-                        if(StyxWoW.Me.IsFlying) {
-                            Flightor.MountHelper.Dismount();
-                        } else {
-                            if(!StyxWoW.Me.IsFalling) {
-                                TreeState = State.ReadyForTask;
-                            }
-                        }
-                    }
-
-                    break;
             }
 
-            if(TreeState == State.ReadyForTask) {
-                if(!StyxWoW.Me.Combat) {
-                    if(StyxWoW.Me.IsGhost || StyxWoW.Me.IsDead) {
+            if (TreeState == State.ReadyForTask) {
+                if (!StyxWoW.Me.Combat) {
+                    if (StyxWoW.Me.IsGhost || StyxWoW.Me.IsDead) {
                         TreeState = State.Dead;
                         return;
                     }
 
-                    if(Variables.NeedToVendor) {
+                    if (Variables.NeedToVendor) {
                         TreeState = State.Mailing;
                         return;
                     }
 
-                    if(GeneralSettings.Instance.LootMobs) {
-                        if(Variables.LootMob != null) {
+                    if (GeneralSettings.Instance.LootMobs) {
+                        if (Variables.LootMob != null) {
                             TreeState = State.Looting;
                             return;
                         }
                     }
 
-                    if(GeneralSettings.Instance.SkinMobs) {
-                        if(Variables.SkinMob != null) {
+                    if (GeneralSettings.Instance.SkinMobs) {
+                        if (Variables.SkinMob != null) {
                             TreeState = State.Skinning;
                             return;
                         }
@@ -269,12 +268,12 @@ namespace Templar.Helpers {
 
                 Variables.NextMob = Mob.GetNextMob;
 
-                if(Variables.NextMob != null) {
-                    if(Variables.NeedToPull) {
+                if (Variables.NextMob != null) {
+                    if (Variables.NeedToPull) {
                         TreeState = State.Pulling;
                     }
                 } else {
-                    if(!StyxWoW.Me.Combat && !StyxWoW.Me.IsActuallyInCombat && Variables.LootMob == null && Variables.SkinMob == null) {
+                    if (!StyxWoW.Me.Combat && !StyxWoW.Me.IsActuallyInCombat && Variables.LootMob == null && Variables.SkinMob == null) {
                         CustomLog.Normal("No more mobs available, moving back to start location.");
                         TreeState = State.MoveToStartLocation;
                     }
