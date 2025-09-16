@@ -8,7 +8,7 @@ This repository provides an updated version of the Templar bot for the HonorBudd
 
 ## Features
 
-- Automated gameplay routines for supported classes (likely Paladin, based on the name "Templar").
+- Automated gameplay routines for all classes.
 - Modular structure with helpers and GUI support.
 - Designed for compatibility with HonorBuddy v2.5.11489.748.
 
