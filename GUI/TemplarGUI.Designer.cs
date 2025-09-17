@@ -1,4 +1,4 @@
-﻿namespace Templar.GUI {
+namespace Templar.GUI {
     partial class TemplarGUI {
         /// <summary>
         /// Required designer variable.
@@ -1028,7 +1028,7 @@
             this.ClientSize = new System.Drawing.Size(395, 402);
             this.Controls.Add(this.tabcontrolBotConfig);
             this.Name = "TemplarGUI";
-            this.Text = "Templar by AknA and Wigglez";
+            this.Text = "Templar by AknA and Wigglez (ReCoded by Likon69 and JWheels)";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TemplarGUI_FormClosing);
             this.Load += new System.EventHandler(this.TemplarGUI_Load);
             this.tabcontrolBotConfig.ResumeLayout(false);
