@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Styx.Common;
 using Styx;
+using Styx.Common;
 using Styx.CommonBot.Database;
 using Styx.CommonBot.ObjectDatabase;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using Templar.GUI.Tabs;
 
-namespace Templar.Helpers {
-    class Variables {
-
+namespace Templar.Helpers
+{
+    class Variables
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -86,68 +87,101 @@ namespace Templar.Helpers {
         // Getter & Setter
         // ===========================================================
 
-        public static uint MyLatency {
-            get {
-                return StyxWoW.WoWClient.Latency;
+        public static uint MyLatency
+        {
+            get { return StyxWoW.WoWClient.Latency; }
+        }
+
+        public static int MobsTargettingMe
+        {
+            get
+            {
+                return ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
+                    .Count(u =>
+                        (
+                            u.IsTargetingMeOrPet
+                            || (u.IsTargetingAnyMinion && u.OwnedByUnit == StyxWoW.Me)
+                        ) && !u.IsPlayer
+                    );
             }
         }
 
-        public static int MobsTargettingMe {
-            get {
-                return ObjectManager.GetObjectsOfTypeFast<WoWUnit>().Count(u => (u.IsTargetingMeOrPet || (u.IsTargetingAnyMinion && u.OwnedByUnit == StyxWoW.Me)) && !u.IsPlayer);
+        public static bool NeedToVendor
+        {
+            get { return NeedToRepair || MinimumBagSlotsMet; }
+        }
+
+        public static bool NeedToRepair
+        {
+            get
+            {
+                return StyxWoW.Me.DurabilityPercent
+                    <= (double)VendorSettings.Instance.MinimumDurabilityForRepairs / 100;
             }
         }
 
-        public static bool NeedToVendor {
-            get {
-                return NeedToRepair || MinimumBagSlotsMet;
+        public static bool MinimumBagSlotsMet
+        {
+            get
+            {
+                return StyxWoW.Me.FreeBagSlots
+                    <= (uint)GeneralSettings.Instance.MinimumFreeBagSlots;
             }
         }
 
-        public static bool NeedToRepair {
-            get {
-                return StyxWoW.Me.DurabilityPercent <= (double)VendorSettings.Instance.MinimumDurabilityForRepairs / 100;
-            }
-        }
-
-        public static bool MinimumBagSlotsMet {
-            get {
-                return StyxWoW.Me.FreeBagSlots <= (uint)GeneralSettings.Instance.MinimumFreeBagSlots;
-            }
-        }
-
-        public static bool HasEnoughForRepairs {
-            get {
+        public static bool HasEnoughForRepairs
+        {
+            get
+            {
                 var repaircost = Lua.GetReturnVal<ulong>("return GetRepairAllCost()", 0);
                 return StyxWoW.Me.Copper >= repaircost;
             }
         }
 
-        public static bool IsAtStartLocation {
+        public static bool IsAtStartLocation
+        {
             get { return Vector3.Distance(StyxWoW.Me.Location, StartLocation) <= 5; }
         }
 
-        public static WoWGameObject CloseMailbox {
-            get {
-                return ObjectManager.GetObjectsOfTypeFast<WoWGameObject>().Where(go => go != null && go.SubType == WoWGameObjectType.Mailbox).OrderBy(go => go.Distance).FirstOrDefault();
+        public static WoWGameObject CloseMailbox
+        {
+            get
+            {
+                return ObjectManager
+                    .GetObjectsOfTypeFast<WoWGameObject>()
+                    .Where(go => go != null && go.SubType == WoWGameObjectType.Mailbox)
+                    .OrderBy(go => go.Distance)
+                    .FirstOrDefault();
             }
         }
 
-        public static MailboxResult FarMailbox {
-            get {
-                return Query.GetNearestMailbox(StyxWoW.Me.MapId, StyxWoW.Me.Location);
+        public static MailboxResult FarMailbox
+        {
+            get { return Query.GetNearestMailbox(StyxWoW.Me.MapId, StyxWoW.Me.Location); }
+        }
+
+        public static WoWUnit CloseRepairVendor
+        {
+            get
+            {
+                return ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
+                    .Where(u => u != null && u.IsRepairMerchant && u.IsAlive && !u.IsHostile)
+                    .OrderBy(u => u.Distance)
+                    .FirstOrDefault();
             }
         }
 
-        public static WoWUnit CloseRepairVendor {
-            get {
-                return ObjectManager.GetObjectsOfTypeFast<WoWUnit>().Where(u => u != null && u.IsRepairMerchant && u.IsAlive && !u.IsHostile).OrderBy(u => u.Distance).FirstOrDefault();
-            }
-        }
-
-        public static NpcResult FarRepairVendor {
-            get {
-                return Query.GetNearestNpc(StyxWoW.Me.MapId, StyxWoW.Me.Location, UnitNPCFlags.Repair);
+        public static NpcResult FarRepairVendor
+        {
+            get
+            {
+                return Query.GetNearestNpc(
+                    StyxWoW.Me.MapId,
+                    StyxWoW.Me.Location,
+                    UnitNPCFlags.Repair
+                );
             }
         }
 

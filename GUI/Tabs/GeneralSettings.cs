@@ -4,9 +4,10 @@ using Styx;
 using Styx.Common;
 using Templar.Helpers;
 
-namespace Templar.GUI.Tabs {
-    public class GeneralSettings {
-
+namespace Templar.GUI.Tabs
+{
+    public class GeneralSettings
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -38,10 +39,12 @@ namespace Templar.GUI.Tabs {
         // Constructors
         // ===========================================================
 
-        static GeneralSettings() {
+        static GeneralSettings()
+        {
             var folderPath = Path.GetDirectoryName(SettingsFilePath);
 
-            if(folderPath != null && !Directory.Exists(folderPath)) {
+            if (folderPath != null && !Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
             }
 
@@ -52,8 +55,21 @@ namespace Templar.GUI.Tabs {
         // Getter & Setter
         // ===========================================================
 
-        public static string SettingsFilePath {
-            get { return Path.Combine(Utilities.AssemblyDirectory, string.Format(@"Settings\{0}\{1}-{2}\{3}.xml", "Templar", StyxWoW.Me.Name, StyxWoW.Me.RealmName, "GeneralSettings")); }
+        public static string SettingsFilePath
+        {
+            get
+            {
+                return Path.Combine(
+                    Utilities.AssemblyDirectory,
+                    string.Format(
+                        @"Settings\{0}\{1}-{2}\{3}.xml",
+                        "Templar",
+                        StyxWoW.Me.Name,
+                        StyxWoW.Me.RealmName,
+                        "GeneralSettings"
+                    )
+                );
+            }
         }
 
         // ===========================================================
@@ -64,21 +80,25 @@ namespace Templar.GUI.Tabs {
         // Methods
         // ===========================================================
 
-        public static void Load() {
-            try {
+        public static void Load()
+        {
+            try
+            {
                 Instance = ObjectXMLSerializer<GeneralSettings>.Load(SettingsFilePath);
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 Instance = new GeneralSettings();
             }
         }
 
-        public static void Save() {
+        public static void Save()
+        {
             ObjectXMLSerializer<GeneralSettings>.Save(Instance, SettingsFilePath);
         }
 
         // ===========================================================
         // Inner and Anonymous Classes
         // ===========================================================
-
     }
 }

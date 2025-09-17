@@ -7,25 +7,31 @@ using Styx;
 using Styx.Common;
 using Templar.Helpers;
 
-namespace Templar.GUI.Tabs {
-    public class BlacklistEntry : INotifyPropertyChanged {
+namespace Templar.GUI.Tabs
+{
+    public class BlacklistEntry : INotifyPropertyChanged
+    {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [XmlAttribute]
         public uint Entry { get; set; }
+
         [XmlAttribute]
         public string Name { get; set; }
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName) {
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
             var handler = PropertyChanged;
-            if(handler != null) {
+            if (handler != null)
+            {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
-    public class BlacklistSettings {
+    public class BlacklistSettings
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -42,22 +48,36 @@ namespace Templar.GUI.Tabs {
         // Constructors
         // ===========================================================
 
-        static BlacklistSettings() {
+        static BlacklistSettings()
+        {
             var folderPath = Path.GetDirectoryName(SettingsFilePath);
 
-            if(folderPath != null && !Directory.Exists(folderPath)) {
+            if (folderPath != null && !Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
             }
 
             Load();
         }
+
         // ===========================================================
         // Getter & Setter
         // ===========================================================
 
-        public static string SettingsFilePath {
-            get {
-                return Path.Combine(Utilities.AssemblyDirectory, string.Format(@"Settings\{0}\{1}-{2}\{3}.xml", "Templar", StyxWoW.Me.Name, StyxWoW.Me.RealmName, "BlacklistSettings"));
+        public static string SettingsFilePath
+        {
+            get
+            {
+                return Path.Combine(
+                    Utilities.AssemblyDirectory,
+                    string.Format(
+                        @"Settings\{0}\{1}-{2}\{3}.xml",
+                        "Templar",
+                        StyxWoW.Me.Name,
+                        StyxWoW.Me.RealmName,
+                        "BlacklistSettings"
+                    )
+                );
             }
         }
 
@@ -68,15 +88,20 @@ namespace Templar.GUI.Tabs {
         // ===========================================================
         // Methods
         // ===========================================================
-        public static void Load() {
-            try {
+        public static void Load()
+        {
+            try
+            {
                 Instance = ObjectXMLSerializer<BlacklistSettings>.Load(SettingsFilePath);
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 Instance = new BlacklistSettings();
             }
         }
 
-        public static void Save() {
+        public static void Save()
+        {
             ObjectXMLSerializer<BlacklistSettings>.Save(Instance, SettingsFilePath);
         }
 

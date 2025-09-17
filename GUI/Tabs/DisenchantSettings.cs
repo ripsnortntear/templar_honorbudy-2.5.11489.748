@@ -4,9 +4,10 @@ using Styx;
 using Styx.Common;
 using Templar.Helpers;
 
-namespace Templar.GUI.Tabs {
-    public class DisenchantSettings {
-
+namespace Templar.GUI.Tabs
+{
+    public class DisenchantSettings
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -31,10 +32,12 @@ namespace Templar.GUI.Tabs {
         // Constructors
         // ===========================================================
 
-        static DisenchantSettings() {
+        static DisenchantSettings()
+        {
             var folderPath = Path.GetDirectoryName(SettingsFilePath);
 
-            if(folderPath != null && !Directory.Exists(folderPath)) {
+            if (folderPath != null && !Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
             }
 
@@ -45,8 +48,21 @@ namespace Templar.GUI.Tabs {
         // Getter & Setter
         // ===========================================================
 
-        public static string SettingsFilePath {
-            get { return Path.Combine(Utilities.AssemblyDirectory, string.Format(@"Settings\{0}\{1}-{2}\{3}.xml", "Templar", StyxWoW.Me.Name, StyxWoW.Me.RealmName, "DisenchantSettings")); }
+        public static string SettingsFilePath
+        {
+            get
+            {
+                return Path.Combine(
+                    Utilities.AssemblyDirectory,
+                    string.Format(
+                        @"Settings\{0}\{1}-{2}\{3}.xml",
+                        "Templar",
+                        StyxWoW.Me.Name,
+                        StyxWoW.Me.RealmName,
+                        "DisenchantSettings"
+                    )
+                );
+            }
         }
 
         // ===========================================================
@@ -57,21 +73,25 @@ namespace Templar.GUI.Tabs {
         // Methods
         // ===========================================================
 
-        public static void Load() {
-            try {
+        public static void Load()
+        {
+            try
+            {
                 Instance = ObjectXMLSerializer<DisenchantSettings>.Load(SettingsFilePath);
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 Instance = new DisenchantSettings();
             }
         }
 
-        public static void Save() {
+        public static void Save()
+        {
             ObjectXMLSerializer<DisenchantSettings>.Save(Instance, SettingsFilePath);
         }
 
         // ===========================================================
         // Inner and Anonymous Classes
         // ===========================================================
-
     }
 }

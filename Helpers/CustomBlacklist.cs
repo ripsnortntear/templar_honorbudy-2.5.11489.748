@@ -8,8 +8,10 @@ using Styx.CommonBot.ObjectDatabase;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 
-namespace Templar.Helpers {
-    public class CustomBlacklist {
+namespace Templar.Helpers
+{
+    public class CustomBlacklist
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -18,10 +20,14 @@ namespace Templar.Helpers {
         // Fields
         // ===========================================================
 
-        private static readonly Dictionary<ulong, DateTime> GuidBlackList = new Dictionary<ulong, DateTime>();
-        private static readonly Dictionary<WoWItem, DateTime> ItemBlacklist = new Dictionary<WoWItem, DateTime>();
-        private static readonly Dictionary<int, DateTime> EntryBlacklist = new Dictionary<int, DateTime>();
-        private static readonly Dictionary<string, DateTime> NameBlacklist = new Dictionary<string, DateTime>();
+        private static readonly Dictionary<ulong, DateTime> GuidBlackList =
+            new Dictionary<ulong, DateTime>();
+        private static readonly Dictionary<WoWItem, DateTime> ItemBlacklist =
+            new Dictionary<WoWItem, DateTime>();
+        private static readonly Dictionary<int, DateTime> EntryBlacklist =
+            new Dictionary<int, DateTime>();
+        private static readonly Dictionary<string, DateTime> NameBlacklist =
+            new Dictionary<string, DateTime>();
 
         private static WaitTimer _sweepTimer;
 
@@ -41,144 +47,191 @@ namespace Templar.Helpers {
         // Methods
         // ===========================================================
 
-        public static void SweepTimer() {
+        public static void SweepTimer()
+        {
             var maxSweepTime = TimeSpan.FromSeconds(30);
 
-            _sweepTimer = new WaitTimer(maxSweepTime) {
-                WaitTime = maxSweepTime
-            };
+            _sweepTimer = new WaitTimer(maxSweepTime) { WaitTime = maxSweepTime };
         }
-        
-        public static void Add(ulong guid, TimeSpan timeSpan) {
+
+        public static void Add(ulong guid, TimeSpan timeSpan)
+        {
             RemoveExpired();
             GuidBlackList[guid] = DateTime.Now.Add(timeSpan);
         }
 
-        public static void Add(string name, TimeSpan timeSpan) {
+        public static void Add(string name, TimeSpan timeSpan)
+        {
             RemoveExpired();
             NameBlacklist[name] = DateTime.Now.Add(timeSpan);
         }
 
-        public static void Add(int entry, TimeSpan timeSpan) {
+        public static void Add(int entry, TimeSpan timeSpan)
+        {
             RemoveExpired();
             EntryBlacklist[entry] = DateTime.Now.Add(timeSpan);
         }
 
-        public static void Add(WoWItem item, TimeSpan timeSpan) {
+        public static void Add(WoWItem item, TimeSpan timeSpan)
+        {
             RemoveExpired();
             ItemBlacklist[item] = DateTime.Now.Add(timeSpan);
         }
 
-        public static void Add(WoWObject wowObject, TimeSpan timeSpan) {
-            if(wowObject != null) {
+        public static void Add(WoWObject wowObject, TimeSpan timeSpan)
+        {
+            if (wowObject != null)
+            {
                 Add(wowObject.Guid, timeSpan);
             }
         }
 
-        public static void Add(NpcResult npcResult, TimeSpan timeSpan) {
-            if(npcResult != null) {
+        public static void Add(NpcResult npcResult, TimeSpan timeSpan)
+        {
+            if (npcResult != null)
+            {
                 Add(npcResult.Entry, timeSpan);
             }
         }
 
-        public static bool Contains(WoWObject wowObject) {
+        public static bool Contains(WoWObject wowObject)
+        {
             return (wowObject != null) && Contains(wowObject.Guid);
         }
 
-        public static bool Contains(NpcResult npcResult) {
+        public static bool Contains(NpcResult npcResult)
+        {
             return (npcResult != null) && Contains(npcResult.Entry);
         }
 
-        public static bool Contains(ulong guid) {
+        public static bool Contains(ulong guid)
+        {
             DateTime expiry;
-            if(GuidBlackList.TryGetValue(guid, out expiry)) {
+            if (GuidBlackList.TryGetValue(guid, out expiry))
+            {
                 return (expiry > DateTime.Now);
             }
             return false;
         }
 
-        public static bool Contains(string name) {
+        public static bool Contains(string name)
+        {
             DateTime expiry;
-            if(NameBlacklist.TryGetValue(name, out expiry)) {
+            if (NameBlacklist.TryGetValue(name, out expiry))
+            {
                 return (expiry > DateTime.Now);
             }
             return false;
         }
 
-        public static bool Contains(int entry) {
+        public static bool Contains(int entry)
+        {
             DateTime expiry;
-            if(EntryBlacklist.TryGetValue(entry, out expiry)) {
+            if (EntryBlacklist.TryGetValue(entry, out expiry))
+            {
                 return (expiry > DateTime.Now);
             }
             return false;
         }
 
-        public static bool Contains(WoWItem item) {
+        public static bool Contains(WoWItem item)
+        {
             DateTime expiry;
-            if(ItemBlacklist.TryGetValue(item, out expiry)) {
+            if (ItemBlacklist.TryGetValue(item, out expiry))
+            {
                 return (expiry > DateTime.Now);
             }
             return false;
         }
 
-        public static void RemoveExpired() {
-            if(!_sweepTimer.IsFinished) {
+        public static void RemoveExpired()
+        {
+            if (!_sweepTimer.IsFinished)
+            {
                 return;
             }
 
             var now = DateTime.Now;
-            var expiredGuids = (from key in GuidBlackList.Keys where (GuidBlackList[key] < now) select key).ToList();
-            foreach(var guid in expiredGuids) {
+            var expiredGuids = (
+                from key in GuidBlackList.Keys
+                where (GuidBlackList[key] < now)
+                select key
+            ).ToList();
+            foreach (var guid in expiredGuids)
+            {
                 GuidBlackList.Remove(guid);
             }
 
-            var expiredEntries = (from key in EntryBlacklist.Keys where (EntryBlacklist[key] < now) select key).ToList();
-            foreach(var entry in expiredEntries) {
+            var expiredEntries = (
+                from key in EntryBlacklist.Keys
+                where (EntryBlacklist[key] < now)
+                select key
+            ).ToList();
+            foreach (var entry in expiredEntries)
+            {
                 EntryBlacklist.Remove(entry);
             }
 
-            var expiredNames = (from key in NameBlacklist.Keys where (NameBlacklist[key] < now) select key).ToList();
-            foreach(var name in expiredNames) {
+            var expiredNames = (
+                from key in NameBlacklist.Keys
+                where (NameBlacklist[key] < now)
+                select key
+            ).ToList();
+            foreach (var name in expiredNames)
+            {
                 NameBlacklist.Remove(name);
             }
 
-            var expiredItems = (from key in ItemBlacklist.Keys where (ItemBlacklist[key] < now) select key).ToList();
-            foreach(var item in expiredItems) {
+            var expiredItems = (
+                from key in ItemBlacklist.Keys
+                where (ItemBlacklist[key] < now)
+                select key
+            ).ToList();
+            foreach (var item in expiredItems)
+            {
                 ItemBlacklist.Remove(item);
             }
 
             _sweepTimer.Reset();
         }
-        
+
         // GUID
-        public static void RemoveAllGuid() {
+        public static void RemoveAllGuid()
+        {
             var everything = (from key in GuidBlackList.Keys select key).ToList();
-            foreach(var guid in everything) {
+            foreach (var guid in everything)
+            {
                 GuidBlackList.Remove(guid);
             }
         }
 
         // Entry
-        public static void RemoveAllEntries() {
+        public static void RemoveAllEntries()
+        {
             var everything = (from key in EntryBlacklist.Keys select key).ToList();
-            foreach(var entry in everything) {
+            foreach (var entry in everything)
+            {
                 EntryBlacklist.Remove(entry);
             }
         }
 
         // Name
-        public static void RemoveAllNames() {
+        public static void RemoveAllNames()
+        {
             var everything = (from key in NameBlacklist.Keys select key).ToList();
 
-            foreach(var name in everything) {
+            foreach (var name in everything)
+            {
                 NameBlacklist.Remove(name);
             }
         }
 
-        public static void RemoveAllItems() {
+        public static void RemoveAllItems()
+        {
             var everything = (from key in ItemBlacklist.Keys select key).ToList();
 
-            foreach(var item in everything) {
+            foreach (var item in everything)
+            {
                 ItemBlacklist.Remove(item);
             }
         }

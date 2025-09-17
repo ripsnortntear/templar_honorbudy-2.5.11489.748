@@ -1,9 +1,10 @@
 ﻿using System.Windows.Media;
 using Styx.Common;
 
-namespace Templar.Helpers {
-    public class CustomLog {
-
+namespace Templar.Helpers
+{
+    public class CustomLog
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -33,18 +34,25 @@ namespace Templar.Helpers {
         // Methods
         // ===========================================================
 
-        public static void Normal(string message, params object[] args) {
-            if(message == PreviousNormal) {
-                if(args.Length > 0) {
-                    if(args == PreviousArgs) {
+        public static void Normal(string message, params object[] args)
+        {
+            if (message == PreviousNormal)
+            {
+                if (args.Length > 0)
+                {
+                    if (args == PreviousArgs)
+                    {
                         return;
                     }
-                } else {
+                }
+                else
+                {
                     return;
                 }
             }
 
-            if(args.Length > 0) {
+            if (args.Length > 0)
+            {
                 PreviousArgs = args;
             }
 
@@ -52,18 +60,25 @@ namespace Templar.Helpers {
             CustomNormalLog(message, args);
         }
 
-        public static void Diagnostic(string message, params object[] args) {
-            if(message == PreviousDiagnostic) {
-                if(args.Length > 0) {
-                    if(args == PreviousArgs) {
+        public static void Diagnostic(string message, params object[] args)
+        {
+            if (message == PreviousDiagnostic)
+            {
+                if (args.Length > 0)
+                {
+                    if (args == PreviousArgs)
+                    {
                         return;
                     }
-                } else {
+                }
+                else
+                {
                     return;
                 }
             }
 
-            if(args.Length > 0) {
+            if (args.Length > 0)
+            {
                 PreviousArgs = args;
             }
 
@@ -71,11 +86,13 @@ namespace Templar.Helpers {
             CustomDiagnosticLog(message, args);
         }
 
-        public static void NormalSpam(string message, params object[] args) {
+        public static void NormalSpam(string message, params object[] args)
+        {
             CustomNormalLog(message, args);
         }
 
-        public static void DiagnosticSpam(string message, params object[] args) {
+        public static void DiagnosticSpam(string message, params object[] args)
+        {
             CustomDiagnosticLog(message, args);
         }
 
@@ -83,8 +100,10 @@ namespace Templar.Helpers {
         // Inner and Anonymous Classes
         // ===========================================================
 
-        private static void CustomNormalLog(string message, params object[] args) {
-            if(args.Length <= 0) {
+        private static void CustomNormalLog(string message, params object[] args)
+        {
+            if (args.Length <= 0)
+            {
                 Logging.Write(Colors.DeepSkyBlue, string.Format("[{0}]: ", Name) + message);
                 return;
             }
@@ -92,13 +111,22 @@ namespace Templar.Helpers {
             Logging.Write(Colors.DeepSkyBlue, string.Format("[{0}]: ", Name) + message, args);
         }
 
-        private static void CustomDiagnosticLog(string message, params object[] args) {
-            if(args.Length <= 0) {
-                Logging.WriteDiagnostic(Colors.DeepSkyBlue, string.Format("[{0} Diag]: ", Name) + message);
+        private static void CustomDiagnosticLog(string message, params object[] args)
+        {
+            if (args.Length <= 0)
+            {
+                Logging.WriteDiagnostic(
+                    Colors.DeepSkyBlue,
+                    string.Format("[{0} Diag]: ", Name) + message
+                );
                 return;
             }
 
-            Logging.WriteDiagnostic(Colors.DeepSkyBlue, string.Format("[{0} Diag]: ", Name) + message, args);
+            Logging.WriteDiagnostic(
+                Colors.DeepSkyBlue,
+                string.Format("[{0} Diag]: ", Name) + message,
+                args
+            );
         }
     }
 }
