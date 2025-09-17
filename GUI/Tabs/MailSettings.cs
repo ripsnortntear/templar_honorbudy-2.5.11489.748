@@ -4,9 +4,10 @@ using Styx;
 using Styx.Common;
 using Templar.Helpers;
 
-namespace Templar.GUI.Tabs {
-    public class MailSettings {
-
+namespace Templar.GUI.Tabs
+{
+    public class MailSettings
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -30,10 +31,12 @@ namespace Templar.GUI.Tabs {
         // Constructors
         // ===========================================================
 
-        static MailSettings() {
+        static MailSettings()
+        {
             var folderPath = Path.GetDirectoryName(SettingsFilePath);
 
-            if(folderPath != null && !Directory.Exists(folderPath)) {
+            if (folderPath != null && !Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
             }
 
@@ -44,8 +47,21 @@ namespace Templar.GUI.Tabs {
         // Getter & Setter
         // ===========================================================
 
-        public static string SettingsFilePath {
-            get { return Path.Combine(Utilities.AssemblyDirectory, string.Format(@"Settings\{0}\{1}-{2}\{3}.xml", "Templar", StyxWoW.Me.Name, StyxWoW.Me.RealmName, "MailSettings")); }
+        public static string SettingsFilePath
+        {
+            get
+            {
+                return Path.Combine(
+                    Utilities.AssemblyDirectory,
+                    string.Format(
+                        @"Settings\{0}\{1}-{2}\{3}.xml",
+                        "Templar",
+                        StyxWoW.Me.Name,
+                        StyxWoW.Me.RealmName,
+                        "MailSettings"
+                    )
+                );
+            }
         }
 
         // ===========================================================
@@ -56,21 +72,25 @@ namespace Templar.GUI.Tabs {
         // Methods
         // ===========================================================
 
-        public static void Load() {
-            try {
+        public static void Load()
+        {
+            try
+            {
                 Instance = ObjectXMLSerializer<MailSettings>.Load(SettingsFilePath);
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 Instance = new MailSettings();
             }
         }
 
-        public static void Save() {
+        public static void Save()
+        {
             ObjectXMLSerializer<MailSettings>.Save(Instance, SettingsFilePath);
         }
 
         // ===========================================================
         // Inner and Anonymous Classes
         // ===========================================================
-
     }
 }

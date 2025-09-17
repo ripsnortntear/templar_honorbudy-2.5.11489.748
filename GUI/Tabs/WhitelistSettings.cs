@@ -7,25 +7,31 @@ using Styx;
 using Styx.Common;
 using Templar.Helpers;
 
-namespace Templar.GUI.Tabs {
-    public class WhitelistEntry : INotifyPropertyChanged {
+namespace Templar.GUI.Tabs
+{
+    public class WhitelistEntry : INotifyPropertyChanged
+    {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [XmlAttribute]
         public uint Entry { get; set; }
+
         [XmlAttribute]
         public string Name { get; set; }
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName) {
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
             var handler = PropertyChanged;
-            if(handler != null) {
+            if (handler != null)
+            {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
-    public class WhitelistSettings {
+    public class WhitelistSettings
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -44,10 +50,12 @@ namespace Templar.GUI.Tabs {
         // Constructors
         // ===========================================================
 
-        static WhitelistSettings() {
+        static WhitelistSettings()
+        {
             var folderPath = Path.GetDirectoryName(SettingsFilePath);
 
-            if(folderPath != null && !Directory.Exists(folderPath)) {
+            if (folderPath != null && !Directory.Exists(folderPath))
+            {
                 Directory.CreateDirectory(folderPath);
             }
 
@@ -58,9 +66,20 @@ namespace Templar.GUI.Tabs {
         // Getter & Setter
         // ===========================================================
 
-        public static string SettingsFilePath {
-            get {
-                return Path.Combine(Utilities.AssemblyDirectory, string.Format(@"Settings\{0}\{1}-{2}\{3}.xml", "Templar", StyxWoW.Me.Name, StyxWoW.Me.RealmName, "WhitelistSettings"));
+        public static string SettingsFilePath
+        {
+            get
+            {
+                return Path.Combine(
+                    Utilities.AssemblyDirectory,
+                    string.Format(
+                        @"Settings\{0}\{1}-{2}\{3}.xml",
+                        "Templar",
+                        StyxWoW.Me.Name,
+                        StyxWoW.Me.RealmName,
+                        "WhitelistSettings"
+                    )
+                );
             }
         }
 
@@ -71,15 +90,20 @@ namespace Templar.GUI.Tabs {
         // ===========================================================
         // Methods
         // ===========================================================
-        public static void Load() {
-            try {
+        public static void Load()
+        {
+            try
+            {
                 Instance = ObjectXMLSerializer<WhitelistSettings>.Load(SettingsFilePath);
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 Instance = new WhitelistSettings();
             }
         }
 
-        public static void Save() {
+        public static void Save()
+        {
             ObjectXMLSerializer<WhitelistSettings>.Save(Instance, SettingsFilePath);
         }
 

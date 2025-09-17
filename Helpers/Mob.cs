@@ -5,9 +5,10 @@ using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using Templar.GUI.Tabs;
 
-namespace Templar.Helpers {
-    public class Mob {
-
+namespace Templar.Helpers
+{
+    public class Mob
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -24,22 +25,19 @@ namespace Templar.Helpers {
         // Getter & Setter
         // ===========================================================
 
-        public static WoWUnit GetNextMob {
-            get {
-                return PullMob();
-            }
+        public static WoWUnit GetNextMob
+        {
+            get { return PullMob(); }
         }
 
-        public static WoWUnit GetLootMob {
-            get {
-                return LootMob();
-            }
+        public static WoWUnit GetLootMob
+        {
+            get { return LootMob(); }
         }
 
-        public static WoWUnit GetSkinMob {
-            get {
-                return SkinMob();
-            }
+        public static WoWUnit GetSkinMob
+        {
+            get { return SkinMob(); }
         }
 
         // ===========================================================
@@ -54,38 +52,47 @@ namespace Templar.Helpers {
         // Inner and Anonymous Classes
         // ===========================================================
 
-        private static WoWUnit PullMob() {
+        private static WoWUnit PullMob()
+        {
             return !GeneralSettings.Instance.MultiPull
-                ? ObjectManager.GetObjectsOfTypeFast<WoWUnit>()
+                ? ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
                     .Where(SinglePull)
                     .OrderBy(u => StyxWoW.Me.Location.Distance(u.Location))
                     .FirstOrDefault()
-                : ObjectManager.GetObjectsOfTypeFast<WoWUnit>()
+                : ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
                     .Where(MultiPull)
                     .OrderBy(u => StyxWoW.Me.Location.Distance(u.Location))
                     .FirstOrDefault();
         }
 
-        private static WoWUnit LootMob() {
-            return ObjectManager.GetObjectsOfTypeFast<WoWUnit>()
+        private static WoWUnit LootMob()
+        {
+            return ObjectManager
+                .GetObjectsOfTypeFast<WoWUnit>()
                 .Where(LootNext)
                 .OrderBy(u => StyxWoW.Me.Location.Distance(u.Location))
                 .FirstOrDefault();
         }
 
-        private static WoWUnit SkinMob() {
+        private static WoWUnit SkinMob()
+        {
             return !GeneralSettings.Instance.NinjaSkin
-                ? ObjectManager.GetObjectsOfTypeFast<WoWUnit>()
+                ? ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
                     .Where(SkinNextNoNinja)
                     .OrderBy(u => StyxWoW.Me.Location.Distance(u.Location))
                     .FirstOrDefault()
-                : ObjectManager.GetObjectsOfTypeFast<WoWUnit>()
+                : ObjectManager
+                    .GetObjectsOfTypeFast<WoWUnit>()
                     .Where(SkinNext)
                     .OrderBy(u => StyxWoW.Me.Location.Distance(u.Location))
                     .FirstOrDefault();
         }
 
-        private static bool GenericContains(WoWUnit u) {
+        private static bool GenericContains(WoWUnit u)
+        {
             return u != StyxWoW.Me
                 && u.IsValid
                 && u.Name != "Summon Enabler Stalker"
@@ -98,8 +105,10 @@ namespace Templar.Helpers {
                 && !u.IsPet;
         }
 
-        private static bool GenericAliveMobContains(WoWUnit u) {
-            var _base = GenericContains(u)
+        private static bool GenericAliveMobContains(WoWUnit u)
+        {
+            var _base =
+                GenericContains(u)
                 && u.Attackable
                 && u.IsAlive
                 && (u.IsHostile || u.IsNeutral)
@@ -110,7 +119,8 @@ namespace Templar.Helpers {
             return GeneralSettings.Instance.IgnoreElites ? _base && !u.Elite : _base;
         }
 
-        private static bool SkinNext(WoWUnit u) {
+        private static bool SkinNext(WoWUnit u)
+        {
             return GenericContains(u)
                 && u.CanSkin
                 && u.Skinnable
@@ -119,11 +129,13 @@ namespace Templar.Helpers {
                 && !CustomBlacklist.Contains(u.Guid);
         }
 
-        private static bool SkinNextNoNinja(WoWUnit u) {
+        private static bool SkinNextNoNinja(WoWUnit u)
+        {
             return SkinNext(u) && u.KilledByMe;
         }
 
-        private static bool LootNext(WoWUnit u) {
+        private static bool LootNext(WoWUnit u)
+        {
             return GenericContains(u)
                 && u.IsDead
                 && u.Lootable
@@ -131,31 +143,38 @@ namespace Templar.Helpers {
                 && !CustomBlacklist.Contains(u.Guid);
         }
 
-        private static bool Whitelisted(WoWObject u) {
+        private static bool Whitelisted(WoWObject u)
+        {
             return WhitelistSettings.Instance.WhitelistedUnits.Any(b => b.Entry == u.Entry);
         }
 
-        private static bool WithinDistance(WoWObject u) {
-            return u.Location.Distance(Variables.StartLocation) <= GeneralSettings.Instance.StartingLocationMaxDistance;
+        private static bool WithinDistance(WoWObject u)
+        {
+            return u.Location.Distance(Variables.StartLocation)
+                <= GeneralSettings.Instance.StartingLocationMaxDistance;
         }
 
-        private static bool SinglePull(WoWUnit u) {
+        private static bool SinglePull(WoWUnit u)
+        {
             return !WhitelistSettings.Instance.AttackWhitelistOnly
                 ? SinglePullWithinDistance(u)
                 : SinglePullWithinDistance(u) && Whitelisted(u);
         }
 
-        private static bool MultiPull(WoWUnit u) {
+        private static bool MultiPull(WoWUnit u)
+        {
             return !WhitelistSettings.Instance.AttackWhitelistOnly
                 ? MultiPullWithinDistance(u)
                 : MultiPullWithinDistance(u) && Whitelisted(u);
         }
 
-        private static bool SinglePullWithinDistance(WoWUnit u) {
+        private static bool SinglePullWithinDistance(WoWUnit u)
+        {
             return GenericAliveMobContains(u) && WithinDistance(u);
         }
 
-        private static bool MultiPullWithinDistance(WoWUnit u) {
+        private static bool MultiPullWithinDistance(WoWUnit u)
+        {
             return GenericAliveMobContains(u)
                 && WithinDistance(u)
                 && !u.TaggedByMe

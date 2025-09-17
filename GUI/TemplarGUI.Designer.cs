@@ -1,4 +1,4 @@
-namespace Templar.GUI {
+﻿namespace Templar.GUI {
     partial class TemplarGUI {
         /// <summary>
         /// Required designer variable.

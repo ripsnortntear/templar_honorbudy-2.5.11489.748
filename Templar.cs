@@ -8,14 +8,16 @@
 
 using System;
 using System.Windows.Forms;
+using Styx.CommonBot;
+using Styx.TreeSharp;
 using Styx.WoWInternals;
 using Templar.GUI;
 using Templar.Helpers;
-using Styx.CommonBot;
-using Styx.TreeSharp;
 
-namespace Templar {
-    public class Templar : BotBase {
+namespace Templar
+{
+    public class Templar : BotBase
+    {
         // ===========================================================
         // Constants
         // ===========================================================
@@ -39,21 +41,27 @@ namespace Templar {
         // Methods for/from SuperClass/Interfaces
         // ===========================================================
 
-        public override string Name {
+        public override string Name
+        {
             get { return "Templar"; }
         }
 
-        public override Composite Root {
+        public override Composite Root
+        {
             get { return _root ?? (_root = Composites.CreateRoot()); }
         }
 
-        public override PulseFlags PulseFlags {
+        public override PulseFlags PulseFlags
+        {
             get { return PulseFlags.All; }
         }
 
-        public override Form ConfigurationForm {
-            get {
-                if(_form == null || !_form.Visible) {
+        public override Form ConfigurationForm
+        {
+            get
+            {
+                if (_form == null || !_form.Visible)
+                {
                     _form = new TemplarGUI();
                 }
 
@@ -61,8 +69,10 @@ namespace Templar {
             }
         }
 
-        public override void Start() {
-            try {
+        public override void Start()
+        {
+            try
+            {
                 CustomLog.Name = "Templar";
 
                 CustomBlacklist.SweepTimer();
@@ -70,37 +80,58 @@ namespace Templar {
                 Lua.Events.AttachEvent("UI_ERROR_MESSAGE", TaskManager.HandleErrorMessage);
 
                 PriorityTreeState.TreeState = PriorityTreeState.State.ReadyForTask;
-            } catch(Exception e) {
-                CustomLog.Normal("Could not initialize.\nMessage = {0}\nStacktrace = {1}", e.Message, e.StackTrace);
-            } finally {
+            }
+            catch (Exception e)
+            {
+                CustomLog.Normal(
+                    "Could not initialize.\nMessage = {0}\nStacktrace = {1}",
+                    e.Message,
+                    e.StackTrace
+                );
+            }
+            finally
+            {
                 CustomLog.Normal("Initialization complete.");
             }
         }
 
-        public override void Stop() {
-            try {
+        public override void Stop()
+        {
+            try
+            {
                 CustomBlacklist.RemoveAllNames();
 
                 Lua.Events.DetachEvent("UI_ERROR_MESSAGE", TaskManager.HandleErrorMessage);
 
                 Variables.SetStartLocation = false;
                 Variables.AlteredSettings = false;
-            } catch(Exception e) {
-                CustomLog.Normal("Could not dispose.\nMessage = {0}\nStacktrace = {1}", e.Message, e.StackTrace);
-            } finally {
+            }
+            catch (Exception e)
+            {
+                CustomLog.Normal(
+                    "Could not dispose.\nMessage = {0}\nStacktrace = {1}",
+                    e.Message,
+                    e.StackTrace
+                );
+            }
+            finally
+            {
                 CustomLog.Normal("Shutdown complete.");
             }
         }
 
-        public override bool RequiresProfile {
+        public override bool RequiresProfile
+        {
             get { return false; }
         }
 
-        public override bool RequiresProfileScope {
+        public override bool RequiresProfileScope
+        {
             get { return false; }
         }
 
-        public override void Pulse() {
+        public override void Pulse()
+        {
             PriorityTreeState.TreeStateHandler();
         }
 
@@ -111,6 +142,5 @@ namespace Templar {
         // ===========================================================
         // Inner and Anonymous Classes
         // ===========================================================
-
     }
 }
